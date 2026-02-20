@@ -15,6 +15,8 @@ def get_stock_data(symbol: str, start: str, end: str) -> pd.DataFrame:
     """
     try:
         stock_data = yf.download(symbol, start=start, end=end)
+        stock_data.columns = stock_data.columns.get_level_values(0)
+        stock_data.columns = stock_data.columns.str.lower()
         stock_data = stock_data.reset_index()
         return stock_data
     except Exception as e:
