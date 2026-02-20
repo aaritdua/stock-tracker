@@ -13,6 +13,9 @@ def main():
     mae, rmse, r2 = evaluate_model(model, X_test, y_test)
     prediction = predict_next_close(model, stock_data)
     print(f"Predicted next close for {SYMBOL}: ${prediction:.2f}")
+    print(f"Mean Absolute Error: {mae}")
+    print(f"Root Mean Squared Erro: {rmse}")
+    print(f"R^2: {r2}")
 
 if __name__ == "__main__":
     main()
