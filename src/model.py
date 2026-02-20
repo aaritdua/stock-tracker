@@ -1,6 +1,8 @@
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 import pandas as pd
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np
 
 FEATURES = ["close", "volume", "volatility", "ma_3", "ma_5", "ma_10"]
 
@@ -31,3 +33,15 @@ def predict_next_close(model, df):
     current_close = df["close"].iloc[-1]
 
     return current_close * (1 + predicted_return[0])
+
+def evaluate_model(model, X_test, y_test):
+    y_pred = model.predict(X_test)
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)   
+    
+    print(f"MAE: {mae}")
+    print(f"RMSE: {rmse}")
+    print(f"R²: {r2}")
+    
+    return mae, rmse, r2
