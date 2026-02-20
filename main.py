@@ -3,7 +3,7 @@ from src.features import build_features
 from src.model import training_model, evaluate_model, predict_next_close
 
 SYMBOL = "GOOG"
-START_DATE = "2022-01-01"
+START_DATE = "2010-01-01"
 END_DATE = "2026-02-20"
 
 def main():

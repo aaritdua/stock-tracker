@@ -28,6 +28,8 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["ma_3"] = df["close"].rolling(3).mean()
     df["ma_5"] = df["close"].rolling(5).mean()
     df["ma_10"] = df["close"].rolling(10).mean()
+    df["ma_20"] = df["close"].rolling(20).mean()
+    df["ma_50"] = df["close"].rolling(50).mean()
     
     df["target_return"] = df["return"].shift(-1)
     
