@@ -24,3 +24,10 @@ def training_model(df: pd.DataFrame):
     model.fit(X_train, y_train)
 
     return model, X_test, y_test
+
+def predict_next_close(model, df):
+    latest_features = df[FEATURES].iloc[-1:]
+    predicted_return = model.predict(latest_features)
+    current_close = df["close"].iloc[-1]
+
+    return current_close * (1 + predicted_return[0])
