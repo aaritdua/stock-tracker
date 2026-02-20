@@ -15,6 +15,8 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
         - 'ma_3': 3-period moving average of the closing price.
         - 'ma_5': 5-period moving average of the closing price.
         - 'ma_10': 10-period moving average of the closing price.
+        - 'ma_20': 20-period moving average of the closing price.
+        - 'ma_50': 50-period moving average of the closing price.
         - 'target_return': Next-period return (shifted by -1),
                            typically used as a prediction target.
 
