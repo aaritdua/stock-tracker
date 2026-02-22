@@ -17,6 +17,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
         - 'ma_10': 10-period moving average of the closing price.
         - 'ma_20': 20-period moving average of the closing price.
         - 'ma_50': 50-period moving average of the closing price.
+        - 'rsi': Relative Strength Index (14 day period)
         - 'target_return': Next-period return (shifted by -1),
                            typically used as a prediction target.
 
@@ -27,6 +28,13 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """
     df["return"] = df["close"].pct_change()
     df["volatility"] = df["return"].rolling(5).std()
+    delta_close = df["close"].diff()
+    gain = delta_close.clip(lower=0)
+    loss = delta_close.clip(upper=0) * -1
+    avg_gain = gain.rolling(14).mean()
+    avg_loss = loss.rolling(14).mean()
+    rs = avg_gain / avg_loss
+    df["rsi"] = 100 - 100/(1 + rs)
     df["ma_3"] = df["close"].rolling(3).mean()
     df["ma_5"] = df["close"].rolling(5).mean()
     df["ma_10"] = df["close"].rolling(10).mean()
