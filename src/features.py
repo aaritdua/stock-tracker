@@ -35,6 +35,9 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     avg_loss = loss.rolling(14).mean()
     rs = avg_gain / avg_loss
     df["rsi"] = 100 - 100/(1 + rs)
+    df["macd"] = df["close"].ewm(span=12).mean() = df["close"].ewm(span=26).mean()
+    df["macd_signal"] = df["macd"].ewm(span=9).mean()
+    df["macd_histogram"] = df["macd"] - df["macd_signal"]
     df["ma_3"] = df["close"].rolling(3).mean()
     df["ma_5"] = df["close"].rolling(5).mean()
     df["ma_10"] = df["close"].rolling(10).mean()
