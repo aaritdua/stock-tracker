@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
 
-FEATURES = ["close", "volume", "volatility", "rsi", "macd", "macd_signal", "macd_histogram" "ma_3", "ma_5", "ma_10", "ma_20", "ma_50"]
+FEATURES = ["close", "volume", "volatility", "rsi", "macd", "macd_signal", "macd_histogram", "ma_3", "ma_5", "ma_10", "ma_20", "ma_50"]
 
 def training_model(df: pd.DataFrame):
     """
