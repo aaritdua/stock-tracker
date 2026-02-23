@@ -37,15 +37,15 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["macd"] = df["close"].ewm(span=12).mean() - df["close"].ewm(span=26).mean()
     df["macd_signal"] = df["macd"].ewm(span=9).mean()
     df["macd_histogram"] = df["macd"] - df["macd_signal"]
-    std_20 = df["close"].rolling(20).std()
-    df["bb_upper"] = df["ma_20"] + (2 * std_20)
-    df["bb_lower"] = df["ma_20"] - (2 * std_20)
-    df["bb_width"] = df["bb_upper"] - df["bb_lower"]
     df["ma_3"] = df["close"].rolling(3).mean()
     df["ma_5"] = df["close"].rolling(5).mean()
     df["ma_10"] = df["close"].rolling(10).mean()
     df["ma_20"] = df["close"].rolling(20).mean()
     df["ma_50"] = df["close"].rolling(50).mean()
+    std_20 = df["close"].rolling(20).std()
+    df["bb_upper"] = df["ma_20"] + (2 * std_20)
+    df["bb_lower"] = df["ma_20"] - (2 * std_20)
+    df["bb_width"] = df["bb_upper"] - df["bb_lower"]
     
     df["target_return"] = df["return"].shift(-1)
     
