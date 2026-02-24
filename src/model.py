@@ -1,4 +1,5 @@
-from sklearn.ensemble import RandomForestRegressor
+# from sklearn.ensemble import RandomForestRegressor
+from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -37,7 +38,7 @@ def training_model(df: pd.DataFrame):
     X = df[FEATURES]
     y = df["target_return"]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
-    model = RandomForestRegressor(n_estimators=300, max_depth=10, random_state=42)
+    model = XGBRegressor(n_estimators=1500, max_depth=1, learning_rate=0.005, subsample=0.8, colsample_bytree=0.8, random_state=42)
     model.fit(X_train, y_train)
 
     return model, X_test, y_test
