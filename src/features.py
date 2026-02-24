@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def build_features(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -27,6 +28,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     - The function modifies the input DataFrame in place.
     """
     df["return"] = df["close"].pct_change()
+
     delta_close = df["close"].diff()
     gain = delta_close.clip(lower=0)
     loss = delta_close.clip(upper=0) * -1
@@ -34,21 +36,44 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     avg_loss = loss.rolling(14).mean()
     rs = avg_gain / avg_loss
     df["rsi"] = 100 - 100/(1 + rs)
+
     df["macd"] = df["close"].ewm(span=12).mean() - df["close"].ewm(span=26).mean()
     df["macd_signal"] = df["macd"].ewm(span=9).mean()
     df["macd_histogram"] = df["macd"] - df["macd_signal"]
+
     df["ma_3"] = df["close"].rolling(3).mean()
     df["ma_5"] = df["close"].rolling(5).mean()
     df["ma_10"] = df["close"].rolling(10).mean()
     df["ma_20"] = df["close"].rolling(20).mean()
     df["ma_50"] = df["close"].rolling(50).mean()
+
     std_20 = df["close"].rolling(20).std()
     df["bb_upper"] = df["ma_20"] + (2 * std_20)
     df["bb_lower"] = df["ma_20"] - (2 * std_20)
     df["bb_width"] = df["bb_upper"] - df["bb_lower"]
-    
-    df["target_return"] = df["return"].shift(-1)
-    
-    df = df.dropna()
 
+    high_diff = df["high"].diff()
+    low_diff = df["low"].diff() * -1
+    df["+dm"] = np.where((high_diff > low_diff) & (high_diff > 0), high_diff, 0)
+    df["-dm"] = np.where((low_diff > high_diff) & (low_diff > 0), low_diff, 0)
+    df["tr"] = pd.concat([
+        df["high"] - df["low"],
+        (df["high"] - df["close"].shift(1)).abs(),
+        (df["low"] - df["close"].shift(1)).abs()
+    ], axis=1).max(axis=1)
+    df["atr"] = df["tr"].rolling(14).mean()
+    df["+di"] = (df["+dm"].rolling(14).mean()) * 100/df["atr"]
+    df["-di"] = (df["-dm"].rolling(14).mean()) * 100/df["atr"]
+    df["dx"] = 100 * (abs(df["+di"] - df["-di"]) / (df["+di"] + df["-di"]))
+    df["adx"] = df["dx"].rolling(14).mean()
+
+    # df["rolling_52w_high"] = df["high"].rolling(252).max()
+    # df["rolling_52w_low"] = df["low"].rolling(252).min()
+    # df["price_to_52w_high"] = df["close"] / df["rolling_52w_high"]
+    # df["price_to_52w_low"] = df["close"] / df["rolling_52w_low"]
+
+    df["target_return"] = df["return"].shift(-1)
+    print(f"Dataset size: {len(df)}")
+    df = df.dropna()
+    print(f"Dataset size: {len(df)}")
     return df
