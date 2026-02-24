@@ -19,8 +19,6 @@ FEATURES = ["close",
             "adx", 
             "+di", 
             "-di"
-            "price_to_52w_high", 
-            "price_to_52w_low"
             ]
 
 def training_model(df: pd.DataFrame):

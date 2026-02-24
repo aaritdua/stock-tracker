@@ -67,11 +67,6 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["dx"] = 100 * (abs(df["+di"] - df["-di"]) / (df["+di"] + df["-di"]))
     df["adx"] = df["dx"].rolling(14).mean()
 
-    # df["rolling_52w_high"] = df["high"].rolling(252).max()
-    # df["rolling_52w_low"] = df["low"].rolling(252).min()
-    # df["price_to_52w_high"] = df["close"] / df["rolling_52w_high"]
-    # df["price_to_52w_low"] = df["close"] / df["rolling_52w_low"]
-
     df["target_return"] = df["return"].shift(-1)
     print(f"Dataset size: {len(df)}")
     df = df.dropna()
