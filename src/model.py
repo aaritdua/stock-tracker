@@ -18,7 +18,8 @@ FEATURES = ["close",
             "bb_width", 
             "adx", 
             "+di", 
-            "-di"
+            "-di",
+            "sentiment_score"
             ]
 
 def training_model(df: pd.DataFrame):

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-def build_features(df: pd.DataFrame) -> pd.DataFrame:
+def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame:
     """
     Generate technical features and target variable from historical price data.
 
@@ -66,6 +66,10 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df["-di"] = (df["-dm"].rolling(14).mean()) * 100/df["atr"]
     df["dx"] = 100 * (abs(df["+di"] - df["-di"]) / (df["+di"] + df["-di"]))
     df["adx"] = df["dx"].rolling(14).mean()
+    
+    df["date"] = pd.to_datetime(df["timestamp"]).dt.date
+    df = df.merge(sentiment_df, on="date", how="left")
+    df["sentiment_score"] = df["sentiment_score"].fillna(0)
 
     df["target_return"] = df["return"].shift(-1)
 
