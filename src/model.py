@@ -1,4 +1,3 @@
-# from sklearn.ensemble import RandomForestRegressor
 from xgboost import XGBRegressor
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -24,14 +23,14 @@ FEATURES = ["close",
 
 def training_model(df: pd.DataFrame):
     """
-    Train a Random Forest model on historical stock features.
+    Train an XGBoost model on historical stock features.
 
     Parameters:
     df (pd.DataFrame): DataFrame containing feature columns and target_return column.
 
     Returns:
     tuple: (model, X_test, y_test)
-        - model: Trained RandomForestRegressor
+        - model: Trained XGBRegressor
         - X_test: Test feature set
         - y_test: Actual target values for the test set
     """
