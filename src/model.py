@@ -19,6 +19,10 @@ FEATURES = ["close",
             "adx", 
             "+di", 
             "-di",
+            "atr",
+            "roc",
+            "stoch_k",
+            "stoch_d",
             "sentiment_score"
             ]
 

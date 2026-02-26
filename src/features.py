@@ -67,6 +67,14 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     df["dx"] = 100 * (abs(df["+di"] - df["-di"]) / (df["+di"] + df["-di"]))
     df["adx"] = df["dx"].rolling(14).mean()
     
+    df["roc"] = 100 * ((df["close"] - df["close"].shift(10)) / df["close"].shift(10))
+
+    lowest_low = df["low"].rolling(14).min()
+    highest_high = df["high"].rolling(14).max()
+    perc_k_raw = 100 * (df["close"] - lowest_low) / (highest_high - lowest_low)
+    df["stoch_k"] = perc_k_raw.rolling(3).mean()
+    df["stoch_d"] = df["stoch_k"].rolling(3).mean()
+
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
     df["sentiment_score"] = df["sentiment_score"].fillna(0)
