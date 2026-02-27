@@ -77,6 +77,11 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
 
     df["vroc"] = 100 * ((df["volume"] - df["volume"].shift(10)) / df["volume"].shift(10))
 
+    money_flow_multiplier = ((df["close"] - df["low"]) - (df["high"] - df["close"])) / (df["high"] - df["low"])
+    money_flow_volume = money_flow_multiplier * df["volume"]
+    AD_line = money_flow_volume.cumsum()
+    df["AD_line_roc"] = (AD_line - AD_line.shift(14)) / AD_line.shift(14)
+
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
     df["sentiment_score"] = df["sentiment_score"].fillna(0)
