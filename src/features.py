@@ -1,6 +1,90 @@
 import pandas as pd
 import numpy as np
 
+
+def calculate_parabolic_sar(df):
+    high = df["high"].values
+    low = df["low"].values
+    close = df["close"].values
+
+    length = len(df)
+
+    sar = [0.0] * length
+    trend = [0] * length  # 1 = uptrend, -1 = downtrend
+
+    af_step = 0.02
+    af_max = 0.20
+    af = 0.02  # initial AF
+    ep = None  # explicitly initialize
+
+    # --- Determine initial trend ---
+    if close[1] > close[0]:
+        trend[1] = 1
+        sar[1] = low[0]
+        ep = high[1]
+    else:
+        trend[1] = -1
+        sar[1] = high[0]
+        ep = low[1]
+
+    sar[0] = sar[1]
+    trend[0] = trend[1]
+
+    # --- Main loop ---
+    for i in range(2, length):
+
+        prev_sar = sar[i - 1]
+        prev_trend = trend[i - 1]
+
+        # Calculate tentative SAR
+        current_sar = prev_sar + af * (ep - prev_sar)
+
+        if prev_trend == 1:  # UP TREND
+
+            current_sar = min(current_sar, low[i - 1], low[i - 2])
+
+            if low[i] < current_sar:
+                # REVERSAL
+                trend[i] = -1
+                current_sar = ep
+                ep = low[i]
+                af = af_step  # reset AF
+
+            else:
+                trend[i] = 1
+
+                if high[i] > ep:
+                    ep = high[i]
+                    af = min(af + af_step, af_max)
+
+        else:  # DOWN TREND
+
+            current_sar = max(current_sar, high[i - 1], high[i - 2])
+
+            if high[i] > current_sar:
+                # REVERSAL
+                trend[i] = 1
+                current_sar = ep
+                ep = high[i]
+                af = af_step  # reset AF
+
+            else:
+                trend[i] = -1
+
+                if low[i] < ep:
+                    ep = low[i]
+                    af = min(af + af_step, af_max)
+
+        sar[i] = current_sar
+
+    df["sar"] = sar
+    df["trend"] = trend  # optional but useful for debugging
+    return df
+
+    
+    
+
+
 def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame:
     """
     Generate technical features and target variable from historical price data.
@@ -82,6 +166,8 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     AD_line = money_flow_volume.cumsum()
     df["AD_line_roc"] = (AD_line - AD_line.shift(14)) / AD_line.shift(14)
 
+    df = calculate_parabolic_sar(df)
+
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
     df["sentiment_score"] = df["sentiment_score"].fillna(0)
@@ -91,3 +177,4 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     df = df.dropna()
     
     return df
+
