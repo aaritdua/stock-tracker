@@ -75,6 +75,8 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     df["stoch_k"] = perc_k_raw.rolling(3).mean()
     df["stoch_d"] = df["stoch_k"].rolling(3).mean()
 
+    df["vroc"] = 100 * ((df["volume"] - df["volume"].shift(10)) / df["volume"].shift(10))
+
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
     df["sentiment_score"] = df["sentiment_score"].fillna(0)

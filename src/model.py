@@ -23,6 +23,7 @@ FEATURES = ["close",
             "roc",
             "stoch_k",
             "stoch_d",
+            "vroc",
             "sentiment_score"
             ]
 
