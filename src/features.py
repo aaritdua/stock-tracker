@@ -82,8 +82,6 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     AD_line = money_flow_volume.cumsum()
     df["AD_line_roc"] = (AD_line - AD_line.shift(14)) / AD_line.shift(14)
 
-    df = calculate_parabolic_sar(df)
-
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
     df["sentiment_score"] = df["sentiment_score"].fillna(0)
