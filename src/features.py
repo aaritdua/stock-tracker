@@ -81,6 +81,8 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     money_flow_volume = money_flow_multiplier * df["volume"]
     AD_line = money_flow_volume.cumsum()
     df["AD_line_roc"] = (AD_line - AD_line.shift(14)) / AD_line.shift(14)
+    
+    df["high_low_ratio"] = df["high"] / df["low"]
 
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
