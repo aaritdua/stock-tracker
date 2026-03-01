@@ -26,6 +26,10 @@ FEATURES = ["close",
             "vroc",
             "AD_line_roc",
             "high_low_ratio",
+            "tenkan",
+            "kijun",
+            "cloud_width",
+            "tk_cross",
             "sentiment_score"
             ]
 

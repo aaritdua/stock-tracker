@@ -83,6 +83,15 @@ def build_features(df: pd.DataFrame, sentiment_df: pd.DataFrame) -> pd.DataFrame
     df["AD_line_roc"] = (AD_line - AD_line.shift(14)) / AD_line.shift(14)
     
     df["high_low_ratio"] = df["high"] / df["low"]
+    
+    # ichimoku cloud
+    df["tenkan"] = (df["high"].rolling(9).max() + df["low"].rolling(9).min()) / 2
+    df["kijun"] = (df["high"].rolling(26).max() + df["low"].rolling(26).min()) / 2
+    fifty_two_day_midpoint = (df["high"].rolling(52).max() + df["low"].rolling(52).min()) / 2
+    span_a = (df["tenkan"] + df["kijun"]) / 2
+    span_b = fifty_two_day_midpoint
+    df["cloud_width"] = span_a - span_b
+    df["tk_cross"] = df["tenkan"] - df["kijun"]
 
     df["date"] = pd.to_datetime(df["timestamp"]).dt.date
     df = df.merge(sentiment_df, on="date", how="left")
