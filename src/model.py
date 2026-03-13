@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
+import joblib
 
 FEATURES = ["close", 
             "volume", 
@@ -68,3 +69,16 @@ def evaluate_model(model, X_test, y_test):
     print(f"R²: {r2}")
     
     return mae, rmse, r2
+
+def save_model(model, ticker):
+    path = "models/" + ticker + ".joblib"
+    joblib.dump(model, path)
+    
+def load_model(ticker):
+    path = "models/" + ticker + ".joblib"
+    try:
+        return joblib.load(path)
+    except FileNotFoundError:
+        return None
+    
+    
