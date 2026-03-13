@@ -44,9 +44,6 @@ def main():
         else:
             prediction = predict_next_close(model, stock_data)
         
-        # model, X_test, y_test = training_model(stock_data)
-        # mae, rmse, r2 = evaluate_model(model, X_test, y_test)
-        # prediction = predict_next_close(model, stock_data)
         print(f"Predicted next close for {SYMBOL}: ${prediction:.2f}")
         sentiment = get_sentiment_score(SYMBOL)
         print(f"Sentiment score for {SYMBOL}: {sentiment:.2f}")
