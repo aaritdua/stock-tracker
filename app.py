@@ -40,11 +40,21 @@ def predict(ticker, db = Depends(get_db)):
     return {"ticker": ticker, "predicted_price": float(prediction)}
 
 @app.get('/predictions/{ticker}')
-def predictions(ticker):
-    # return past predictions on ticker
-    pass
+def predictions(ticker, db = Depends(get_db)):
+    return db.query(Predictions).filter(Predictions.ticker == ticker).all()
 
 @app.post('/train/{ticker}')
 def train(ticker):
-    # train the model and save in joblib
-    pass
+    
+    END_DATE = datetime.today().strftime('%Y-%m-%d')
+    START_DATE  = (datetime.today() - timedelta(days=365*15)).strftime('%Y-%m-%d')
+    
+    stock_data = get_stock_data(ticker, START_DATE, END_DATE)
+    sentiment_df = create_sentiment_df(ticker, START_DATE, END_DATE)
+    stock_data = build_features(stock_data, sentiment_df)
+    
+    model, X_test, y_test = training_model(stock_data)
+    mae, rmse, r2 = evaluate_model(model, X_test, y_test)
+    save_model(model, ticker)
+
+    return {"status": "trained", "ticker": ticker}
