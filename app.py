@@ -11,7 +11,7 @@ app = FastAPI()
 
 @app.get('/health')
 def get_health():
-    return {'status': 'ok'}
+    return {'status': 'ok mumma'}
 
 @app.get('/predict/{ticker}')
 def predict(ticker, db = Depends(get_db)):
