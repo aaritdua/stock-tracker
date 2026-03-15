@@ -1,0 +1,87 @@
+body {
+    color: white;
+    background-color: black;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh
+}
+
+h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-top: 64px;
+    letter-spacing: 4px;
+    color: #00ff88;
+}
+
+input {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    width: 500px;
+}
+
+button {
+    background-color: #00ff88;
+    color: black;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+#search-bar {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.card {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 12px /* how rounded, your input is 8px */;
+    padding: 24px /* internal spacing */;
+    width: 500px /* match your input width, 550px? */;
+    margin-top: 8px/* space below search bar */;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.card-ticker {
+    font-size: 28px /* big, like 28px */;
+    font-weight: 700;
+}
+
+.card-predicted {
+    font-size: 22px /* slightly smaller than ticker */;
+    margin-top: 8px /* small gap */;
+}
+
+.card-middle {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0/* some vertical padding */;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+}
+
+.card-bottom {
+    margin-top: 8px /* spacing */;
+    display: flex;
+    gap: 8px;
+    justify-content: center
+}
