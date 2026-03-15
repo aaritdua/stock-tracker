@@ -50,7 +50,7 @@ button {
     border: 1px solid #333;
     border-radius: 12px /* how rounded, your input is 8px */;
     padding: 24px /* internal spacing */;
-    width: 500px /* match your input width, 550px? */;
+    width: 572px /* match your input width, 550px? */;
     margin-top: 8px/* space below search bar */;
     display: flex;
     flex-direction: column;
@@ -62,26 +62,35 @@ button {
 }
 
 .card-ticker {
-    font-size: 28px /* big, like 28px */;
+    font-size: 28px;
     font-weight: 700;
 }
 
+.card-predicted-label {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
 .card-predicted {
-    font-size: 22px /* slightly smaller than ticker */;
-    margin-top: 8px /* small gap */;
+    font-size: 22px;
+    margin-top: 4px;
 }
 
 .card-middle {
     display: flex;
     justify-content: space-between;
-    padding: 16px 0/* some vertical padding */;
+    padding: 16px 0;
     border-top: 1px solid #333;
     border-bottom: 1px solid #333;
 }
 
 .card-bottom {
-    margin-top: 8px /* spacing */;
+    margin-top: 8px;
     display: flex;
     gap: 8px;
     justify-content: center
 }
+
