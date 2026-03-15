@@ -5,17 +5,29 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: stock_tracker
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.14'
-      
+
       - name: Install dependencies
         run: pip install -r requirements.txt
-      
+
       - name: Run tests
         run: pytest tests/
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost/stock_tracker
