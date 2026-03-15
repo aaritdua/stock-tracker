@@ -6,6 +6,10 @@ from src.fetcher import get_stock_data
 from src.features import build_features
 from datetime import datetime, timedelta
 from db.models import Predictions
+from db.models import Base
+from db.database import engine
+
+Base.metadata.create_all(engine)
 
 app = FastAPI()
 
