@@ -10,6 +10,9 @@ const input = document.getElementById('ticker-input')
 input.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') button.click()
 })
+input.addEventListener('input', function() {
+    input.value = input.value.toUpperCase()
+})
 const results = document.getElementById('results')
 
 button.addEventListener('click', async function() {
