@@ -198,7 +198,7 @@ button {
     border-radius: 12px;
     display: flex;
     flex-direction: row;
-    margin-top: 8px;
+    margin-top: 16px;
     overflow: hidden;
 }
 
@@ -343,5 +343,9 @@ button {
     color: #888;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: 16px;
+    margin-top: 32px;
+}
+
+#compare-chart-wrapper {
+    height: 90%;
 }
