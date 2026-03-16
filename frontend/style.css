@@ -12,7 +12,7 @@ body {
 h1 {
     font-size: 48px;
     font-weight: 700;
-    margin-top: 64px;
+    margin-top: 32px;
     letter-spacing: 4px;
     color: #00ff88;
 }
@@ -48,10 +48,12 @@ button {
 .card {
     background-color: #1a1a1a;
     border: 1px solid #333;
-    border-radius: 12px /* how rounded, your input is 8px */;
-    padding: 24px /* internal spacing */;
-    width: 572px /* match your input width, 550px? */;
-    margin-top: 8px/* space below search bar */;
+    border-radius: 12px;
+    padding: 24px;
+    width: 416px;
+    height: 564px;
+    overflow-y: auto;
+    margin-top: 8px;
     display: flex;
     flex-direction: column;
 }
@@ -94,3 +96,55 @@ button {
     justify-content: center
 }
 
+#results {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin-top: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.prediction-table {
+    margin-top: 16px;
+}
+
+.prediction-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.prediction-table th {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 0;
+    border-bottom: 1px solid #333;
+}
+
+.prediction-table td {
+    text-align: center;
+    padding: 8px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #222;
+}
+
+#toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#toast.show {
+    opacity: 1;
+}
