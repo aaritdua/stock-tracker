@@ -7,6 +7,9 @@ function showToast(message) {
 
 const button = document.getElementById('predict-btn')
 const input = document.getElementById('ticker-input')
+input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') button.click()
+})
 const results = document.getElementById('results')
 
 button.addEventListener('click', async function() {
@@ -40,78 +43,104 @@ button.addEventListener('click', async function() {
                     </div>
                 </div>
                 <div class="card-bottom">
-                    <button class="chart-btn">Show Chart</button>
-                    <button class="predictions-btn">Past Predictions</button>
+                    <button class="chart-btn btn-inactive">Show Chart</button>
+                    <button class="predictions-btn btn-inactive">Past Predictions</button>
                 </div>
-                <canvas class="price-chart"></canvas>
+                <div class="chart-wrapper" style="display:none">
+                    <canvas class="price-chart"></canvas>
+                </div>
                 <div class="prediction-table"></div>
             </div>
         `)    
         const newCard = results.lastElementChild
+        let chartVisible = false
+        let chartCreated = false
+        let tableVisible = false
+        let tableCreated = false
         const chart_button = newCard.querySelector('.chart-btn')
         const predictions_button = newCard.querySelector('.predictions-btn')
 
     chart_button.addEventListener('click', async function() {
-        const response_chart = await(fetch(`http://localhost:8000/history/${result}/90`))
-        const response_chart_text = await(response_chart.json())
-
-        const labels = response_chart_text.map(item => item.timestamp)
-        const prices = response_chart_text.map(item => item.close)
-
-        const ctx = newCard.querySelector('.price-chart').getContext('2d')
-        new Chart(ctx, {
-            type: 'line',
-            options: {
-                scales: {
-                    x: {
-                        ticks: {
-                            maxTicksLimit: 6,
-                            callback: function(value, index) {
-                                return labels[index].slice(0, 10)
+        chartVisible = !chartVisible
+        chart_button.classList.toggle('btn-inactive', !chartVisible)
+        if (chartVisible) {
+            if (!chartCreated) {
+                const response_chart = await(fetch(`http://localhost:8000/history/${result}/90`))
+                const response_chart_text = await(response_chart.json())
+        
+                const labels = response_chart_text.map(item => item.timestamp)
+                const prices = response_chart_text.map(item => item.close)
+        
+                const ctx = newCard.querySelector('.price-chart').getContext('2d')
+                chartCreated = true
+                new Chart(ctx, {
+                    type: 'line',
+                    options: {
+                        scales: {
+                            x: {
+                                ticks: {
+                                    maxTicksLimit: 6,
+                                    callback: function(value, index) {
+                                        return labels[index].slice(0, 10)
+                                    }
+                                }
                             }
                         }
+                    },
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Close Price',
+                            data: prices,
+                            borderColor: '#00ff88',
+                            backgroundColor: 'transparent'
+                        }]
                     }
-                }
-            },
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Close Price',
-                    data: prices,
-                    borderColor: '#00ff88',
-                    backgroundColor: 'transparent'
-                }]
+                })
             }
-        })
-
+            newCard.querySelector('.chart-wrapper').style.display = 'block'
+        } else {
+            newCard.querySelector('.chart-wrapper').style.display = 'none'
+        }
 
     })
 
     predictions_button.addEventListener('click', async function() {
-        const predictions_chart = await(fetch(`http://localhost:8000/predictions/${result}`))
-        const predictions_chart_text = await(predictions_chart.json())
-
-        const prediction_table = newCard.querySelector('.prediction-table')
-
-        const rows = predictions_chart_text.map(item => `
-            <tr>
-                <td>${item.created_at.slice(0, 10)}</td>
-                <td>$${item.predicted_price.toFixed(2)}</td>
-            </tr>
-            `).join('')
-
-        prediction_table.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Predicted Price</th>
-                    </tr>
-                </thead>
-                <tbody>${rows}</tbody>
-            </table>
+        tableVisible = !tableVisible
+        predictions_button.classList.toggle('btn-inactive', !tableVisible)
+        if (tableVisible) {
+            if (!tableCreated) {
+                const predictions_chart = await(fetch(`http://localhost:8000/predictions/${result}`))
+                const predictions_chart_text = await(predictions_chart.json())
         
-        `
+                const prediction_table = newCard.querySelector('.prediction-table')
+        
+                const rows = predictions_chart_text.map(item => `
+                    <tr>
+                        <td>${item.created_at.slice(0, 10)}</td>
+                        <td>$${item.predicted_price.toFixed(2)}</td>
+                    </tr>
+                    `).join('')
+        
+                prediction_table.innerHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Predicted Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                
+                `
+            tableCreated = true
+            }
+        newCard.querySelector('.prediction-table').style.display = 'block'
+        } else {
+            newCard.querySelector('.prediction-table').style.display = 'none'
+        }
+        
 
     })
     } else {

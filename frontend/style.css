@@ -148,3 +148,9 @@ button {
 #toast.show {
     opacity: 1;
 }
+
+.btn-inactive {
+    background-color: transparent;
+    color: #00ff88;
+    border: 1px solid #00ff88;
+}
