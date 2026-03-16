@@ -17,9 +17,11 @@ const results = document.getElementById('results')
 
 button.addEventListener('click', async function() {
     const result = input.value
+    document.getElementById('spinner').style.display = 'block'
     input.value = ''
     const response = await(fetch(`http://localhost:8000/predict/${result}`))
     const response_text = await(response.json())
+    document.getElementById('spinner').style.display = 'none'
 
     const delta = response_text.predicted_price - response_text.prev_close
     const pct = ((delta / response_text.prev_close) * 100).toFixed(2)

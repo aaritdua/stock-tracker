@@ -154,3 +154,20 @@ button {
     color: #00ff88;
     border: 1px solid #00ff88;
 }
+
+#spinner {
+    margin-top: 16px;
+}
+
+.spinner-circle {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #333;
+    border-top-color: #00ff88;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
