@@ -5,6 +5,26 @@ function showToast(message) {
     setTimeout(() => toast.classList.remove('show'), 3000)
 }
 
+function updateBestPerformer() {
+    const datasets = compareChart.data.datasets
+    if (datasets.length === 0) return
+    const best = datasets.reduce((best, item) => {
+        const pct = (item.data[item.data.length - 1] - item.data[0]) / item.data[0] * 100
+        const bestPct = (best.data[best.data.length - 1] - best.data[0]) / best.data[0] * 100
+        return pct > bestPct ? item : best
+    })
+    const bestPct = (best.data[best.data.length - 1] - best.data[0]) / best.data[0] * 100
+    const compare_card_best_performer = document.getElementById('compare-card-best-performer')
+    compare_card_best_performer.innerHTML = `
+        <div class="best-performer">
+            <div class="best-performer-label">Top Performer</div>
+            <div class="best-performer-ticker" style="color: ${best.borderColor}">${best.label}</div>
+            <div class="best-performer-pct" style="color: ${best.borderColor}">+${bestPct.toFixed(2)}%</div>
+        </div>
+    `
+
+}
+
 const button = document.getElementById('predict-btn')
 const input = document.getElementById('ticker-input')
 input.addEventListener('keydown', function(e) {
@@ -22,6 +42,12 @@ button.addEventListener('click', async function() {
     const response = await(fetch(`http://localhost:8000/predict/${result}`))
     const response_text = await(response.json())
 
+    if (!response.ok) {
+        document.getElementById('spinner').style.display = 'none'
+        showToast(`Invalid ticker: ${result}`)
+        return
+    }
+
     document.getElementById('spinner').style.display = 'none'
 
     const delta = response_text.predicted_price - response_text.prev_close
@@ -34,7 +60,7 @@ button.addEventListener('click', async function() {
         showToast(`${result} is already on the board`)
         return
     }
-    
+
     const cardCount = results.querySelectorAll('.card').length
     if (cardCount < 3) {
         results.insertAdjacentHTML('beforeend', `
@@ -179,4 +205,108 @@ button.addEventListener('click', async function() {
     } else {
         showToast('Maximum of 3 cards reached')
 }
+})
+
+const COLORS = ['#60a5fa', '#f97316', '#e879f9', '#facc15', '#fb7185', '#a78bfa', '#38bdf8', '#f472b6', '#fb923c', '#4ade80']
+let colorIndex = 0
+
+// compare card graph
+const compareCtx = document.getElementById('compare-chart').getContext('2d')
+const compareChart = new Chart(compareCtx, {
+    type: 'line',
+    data: {
+        labels: [],
+        datasets: []
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                ticks: { maxTicksLimit: 6 }
+            }
+        }
+    }
+})
+
+
+const compare_card_btn = document.getElementById('compare-toggle')
+const compare_card = document.getElementById('compare-card')
+compare_card_btn.addEventListener('change', function() {
+    compare_card.style.display = this.checked ? 'flex' : 'none'
+})
+const compare_card_input = document.getElementById('compare-card-ticker-input')
+compare_card_input.addEventListener('input', function() {
+    compare_card_input.value = compare_card_input.value.toUpperCase()
+})
+compare_card_input.addEventListener('keydown', async function(e) {
+    if (e.key === 'Enter') {
+        const result = compare_card_input.value
+        compare_card_input.value = ''
+        const compare_chart = await(fetch(`http://localhost:8000/history/${result}/90`))
+        if (!compare_chart.ok) {
+            showToast(`Invalid ticker: ${result}`)
+            return
+        }
+        const compare_chart_text = await(compare_chart.json())
+
+        if (compareChart.data.datasets.length >= 10) {
+            showToast('Maximum of 10 tickers reached')
+            return
+        }
+
+        if (compare_chart_text.length === 0) {
+            showToast(`No data found for ${result}`)
+            return
+        }
+
+        const existingLabels = compareChart.data.datasets.map(d => d.label)
+        if (existingLabels.includes(result)) {
+            showToast(`${result} is already on the chart`)
+        return
+        }
+
+        const color = COLORS[colorIndex % COLORS.length]
+        colorIndex++
+        
+        const labels = compare_chart_text.map(item => item.timestamp.slice(0, 10))
+        const prices = compare_chart_text.map(item => item.close)
+
+        if (compareChart.data.labels.length === 0) {
+            compareChart.data.labels = labels
+        }
+
+        compareChart.data.datasets.push({
+            label: result,
+            data: prices,
+            borderColor: color,
+            backgroundColor: 'transparent',
+            pointRadius: 0
+        })
+
+        compareChart.update()
+
+        const list = document.getElementById('compare-card-scrollable-list')
+        list.insertAdjacentHTML('beforeend', `
+            <div class="compare-list-item">
+                <span class="compare-dot" style="background-color: ${color}"></span>
+                <span class="compare-ticker-name">${result}</span>
+                <button class="compare-remove-btn">x</button>
+            </div>
+        `)
+        const newListItem = list.lastElementChild
+        const compare_remove_button = newListItem.querySelector('.compare-remove-btn')
+        compare_remove_button.addEventListener('click', function() {
+            compareChart.data.datasets = compareChart.data.datasets.filter(d => d.label !== result)
+            compareChart.update()
+            newListItem.remove()
+            if (compareChart.data.datasets.length === 0) {
+                document.getElementById('compare-card-best-performer').innerHTML = ''
+            } else {
+                updateBestPerformer()
+            }
+        })
+
+        updateBestPerformer()
+    }
 })
