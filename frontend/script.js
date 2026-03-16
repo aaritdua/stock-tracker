@@ -119,8 +119,16 @@ button.addEventListener('click', async function() {
                 const predictions_chart_text = await(predictions_chart.json())
         
                 const prediction_table = newCard.querySelector('.prediction-table')
-        
-                const rows = predictions_chart_text.map(item => `
+
+                const seen_prediction_dates = new Set()
+                const unique_predictions = predictions_chart_text.filter(item => {
+                    const date = item.created_at.slice(0, 10)
+                    if (seen_prediction_dates.has(date)) return false
+                    seen_prediction_dates.add(date)
+                    return true
+                })
+
+                const rows = unique_predictions.map(item => `
                     <tr>
                         <td>${item.created_at.slice(0, 10)}</td>
                         <td>$${item.predicted_price.toFixed(2)}</td>
