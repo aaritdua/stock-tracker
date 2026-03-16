@@ -56,6 +56,7 @@ button {
     margin-top: 8px;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .card-header {
@@ -170,4 +171,21 @@ button {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+.remove-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: transparent;
+    color: #666;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin: 0;
+}
+
+.remove-btn:hover {
+    color: #ff4444;
 }

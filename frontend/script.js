@@ -29,10 +29,17 @@ button.addEventListener('click', async function() {
     const deltaFormatted = delta.toFixed(2)
     const color = delta > 0 ? '#00ff88' : '#ff4444'
 
+    const existingTickers = Array.from(results.querySelectorAll('.card-ticker')).map(el => el.textContent)
+    if (existingTickers.includes(result)) {
+        showToast(`${result} is already on the board`)
+        return
+    }
+    
     const cardCount = results.querySelectorAll('.card').length
     if (cardCount < 3) {
         results.insertAdjacentHTML('beforeend', `
             <div class="card">
+                <button class="remove-btn">X</button>
                 <div class="card-header">
                     <div class="card-ticker">${response_text.ticker}</div>
                     <div class="card-predicted-label">Predicted Close:</div>
@@ -59,6 +66,10 @@ button.addEventListener('click', async function() {
             </div>
         `)    
         const newCard = results.lastElementChild
+        const remove_button = newCard.querySelector('.remove-btn')
+        remove_button.addEventListener('click', function() {
+            newCard.remove()
+        })
         let chartVisible = false
         let chartCreated = false
         let tableVisible = false
