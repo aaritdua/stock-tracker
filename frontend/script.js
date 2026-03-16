@@ -21,6 +21,7 @@ button.addEventListener('click', async function() {
     input.value = ''
     const response = await(fetch(`http://localhost:8000/predict/${result}`))
     const response_text = await(response.json())
+
     document.getElementById('spinner').style.display = 'none'
 
     const delta = response_text.predicted_price - response_text.prev_close
@@ -115,6 +116,12 @@ button.addEventListener('click', async function() {
         predictions_button.classList.toggle('btn-inactive', !tableVisible)
         if (tableVisible) {
             if (!tableCreated) {
+                const history_response = await(fetch(`http://localhost:8000/history/${result}/365`))
+                const history_data = await(history_response.json())
+                const price_by_date = {}
+                history_data.forEach(item => {
+                    price_by_date[item.timestamp.slice(0, 10)] = item.close
+                })
                 const predictions_chart = await(fetch(`http://localhost:8000/predictions/${result}`))
                 const predictions_chart_text = await(predictions_chart.json())
         
@@ -132,6 +139,7 @@ button.addEventListener('click', async function() {
                     <tr>
                         <td>${item.created_at.slice(0, 10)}</td>
                         <td>$${item.predicted_price.toFixed(2)}</td>
+                        <td>${price_by_date[item.created_at.slice(0, 10)] ? `$${price_by_date[item.created_at.slice(0, 10)].toFixed(2)}` : 'N/A'}</td>
                     </tr>
                     `).join('')
         
@@ -140,7 +148,8 @@ button.addEventListener('click', async function() {
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Predicted Price</th>
+                                <th>Predicted Closing Price</th>
+                                <th>Actual Closing Price</th>
                             </tr>
                         </thead>
                         <tbody>${rows}</tbody>
